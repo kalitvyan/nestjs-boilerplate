@@ -23,6 +23,17 @@ type Wallet {
   updatedAt: DateTime!
   deletedAt: DateTime
   transactions: [Transaction!]
+  user: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+  wallets: [Wallet!]
 }
 
 type Query {
@@ -30,14 +41,18 @@ type Query {
   transaction(id: String!): Transaction!
   wallets: [Wallet!]!
   wallet(id: String!): Wallet!
+  users: [User!]!
+  user(id: Int!): User!
 }
 
 type Mutation {
   createTransaction(wallet: WalletInput!, createTransactionInput: CreateTransactionInput!): Transaction!
   deposit(wallet: WalletInput!, amount: Float!): Transaction!
   withdraw(wallet: WalletInput!, amount: Float!): Transaction!
-  createWallet(createWalletInput: CreateWalletInput!): Wallet!
+  createWallet(user: UserInput!, createWalletInput: CreateWalletInput!): Wallet!
   closeWallet(id: String!): Boolean!
+  createUser(createUserInput: CreateUserInput!): User!
+  removeUser(id: Int!): Boolean!
 }
 
 input WalletInput {
@@ -53,7 +68,20 @@ input CreateTransactionInput {
   amount: Float!
 }
 
+input UserInput {
+  """User id"""
+  id: Float!
+}
+
 input CreateWalletInput {
   """Wallet name"""
   name: String!
+}
+
+input CreateUserInput {
+  """User name"""
+  name: String!
+
+  """User email"""
+  email: String!
 }

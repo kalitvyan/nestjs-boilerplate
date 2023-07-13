@@ -37,6 +37,7 @@ export class Transaction {
 
     @ManyToOne(() => Wallet, (wallet) => wallet.transactions, {
         onDelete: 'CASCADE',
+        nullable: false,
     })
     @JoinColumn({ name: 'wallet_id' })
     @Field(() => Wallet)

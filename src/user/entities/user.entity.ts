@@ -7,23 +7,24 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     OneToMany,
-    ManyToOne,
-    JoinColumn,
 } from 'typeorm'
 
-import { Transaction } from '../../transaction/entities/transaction.entity'
-import { User } from '../../user/entities/user.entity'
+import { Wallet } from '../../wallet/entities/wallet.entity'
 
 @ObjectType()
 @Entity()
-export class Wallet {
+export class User {
     @Field(() => ID)
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+    @PrimaryGeneratedColumn()
+    id: number
 
     @Field(() => String)
     @Column()
     name: string
+
+    @Field(() => String)
+    @Column({ unique: true })
+    email: string
 
     @Field(() => Date)
     @CreateDateColumn({ name: 'created_at' })
@@ -37,17 +38,9 @@ export class Wallet {
     @DeleteDateColumn({ name: 'deleted_at' })
     deletedAt?: Date
 
-    @OneToMany(() => Transaction, (transaction) => transaction.wallet, {
+    @OneToMany(() => Wallet, (wallet) => wallet.user, {
         eager: true,
     })
-    @Field(() => [Transaction])
-    transactions?: Transaction[]
-
-    @ManyToOne(() => User, (user) => user.wallets, {
-        onDelete: 'CASCADE',
-        nullable: false,
-    })
-    @JoinColumn({ name: 'user_id' })
-    @Field(() => User)
-    user: User
+    @Field(() => [Wallet])
+    wallets?: Wallet[]
 }

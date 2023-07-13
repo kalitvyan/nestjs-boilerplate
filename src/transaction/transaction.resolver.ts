@@ -3,7 +3,6 @@ import { Resolver, Query, Mutation, Args, Float } from '@nestjs/graphql'
 import { WalletInput } from 'src/wallet/dto/wallet.input'
 
 import { CreateTransactionInput } from './dto/create-transaction.input'
-// import { UpdateTransactionInput } from './dto/update-transaction.input'
 import { Transaction } from './entities/transaction.entity'
 import { TransactionTypes } from './enums/transaction-types.enum'
 import { TransactionService } from './transaction.service'
@@ -58,20 +57,4 @@ export class TransactionResolver {
 
         return this._transactionService.create(transaction, wallet)
     }
-
-    // @Mutation(() => Transaction)
-    // updateTransaction(
-    //     @Args('updateTransactionInput')
-    //     updateTransactionInput: UpdateTransactionInput,
-    // ) {
-    //     return this.transactionService.update(
-    //         updateTransactionInput.id,
-    //         updateTransactionInput,
-    //     )
-    // }
-
-    // @Mutation(() => Transaction)
-    // removeTransaction(@Args('id', { type: () => String }) id: string): Promise<void> {
-    //     return this._transactionService.remove(id)
-    // }
 }

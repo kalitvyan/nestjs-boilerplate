@@ -1,7 +1,8 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 
+import { UserInput } from 'src/user/dto/user.input'
+
 import { CreateWalletInput } from './dto/create-wallet.input'
-// import { UpdateWalletInput } from './dto/update-wallet.input'
 import { Wallet } from './entities/wallet.entity'
 import { WalletService } from './wallet.service'
 
@@ -12,8 +13,9 @@ export class WalletResolver {
     @Mutation(() => Wallet)
     createWallet(
         @Args('createWalletInput') createWalletInput: CreateWalletInput,
+        @Args('user') user: UserInput,
     ): Promise<Wallet> {
-        return this._walletService.create(createWalletInput)
+        return this._walletService.create(createWalletInput, user)
     }
 
     @Mutation(() => Boolean)
@@ -32,16 +34,4 @@ export class WalletResolver {
     findOne(@Args('id', { type: () => String }) id: string): Promise<Wallet> {
         return this._walletService.findOne(id)
     }
-
-    // @Mutation(() => Wallet)
-    // updateWallet(
-    //     @Args('updateWalletInput') updateWalletInput: UpdateWalletInput,
-    // ): Promise<Wallet> {
-    //     return this._walletService.update(updateWalletInput.id, updateWalletInput)
-    // }
-
-    // @Mutation(() => Wallet)
-    // removeWallet(@Args('id', { type: () => String }) id: string): Promise<void> {
-    //     return this._walletService.remove(id)
-    // }
 }

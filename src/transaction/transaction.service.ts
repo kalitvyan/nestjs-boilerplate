@@ -6,7 +6,6 @@ import { WalletInput } from 'src/wallet/dto/wallet.input'
 import { WalletService } from 'src/wallet/wallet.service'
 
 import { CreateTransactionInput } from './dto/create-transaction.input'
-// import { UpdateTransactionInput } from './dto/update-transaction.input'
 import { Transaction } from './entities/transaction.entity'
 import { TransactionNotFoundException } from './exceptions/transactionNotFound.exception'
 
@@ -40,8 +39,6 @@ export class TransactionService {
     }
 
     async findOne(id: string): Promise<Transaction> {
-        // return await this._transactionRepository.findOne(id)
-
         const transaction = await this._transactionRepository.findOne(id)
 
         if (!transaction) {
@@ -50,13 +47,4 @@ export class TransactionService {
 
         return transaction
     }
-
-    // async update(id: string, updateTransactionInput: UpdateTransactionInput): Promise<Transaction> {
-    //     await this._transactionRepository.save(updateTransactionInput)
-    //     return await this._transactionRepository.findOneOrFail(id)
-    // }
-
-    // async remove(id: string): Promise<void> {
-    //     await this._transactionRepository.delete(id)
-    // }
 }

@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { config } from './config/config'
 import { typeOrmConfig } from './config/typeorm.config'
 import { TransactionModule } from './transaction/transaction.module'
+import { UserModule } from './user/user.module'
 import { WalletModule } from './wallet/wallet.module'
 
 @Module({
@@ -20,6 +21,7 @@ import { WalletModule } from './wallet/wallet.module'
         }),
         TypeOrmModule.forRootAsync(typeOrmConfig),
         TransactionModule,
+        UserModule,
         WalletModule,
     ],
 })
