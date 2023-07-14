@@ -19,7 +19,7 @@ export class UserService {
         return await this._userRepository.save(user)
     }
 
-    async isAvailable(id: number): Promise<User> {
+    async getUserIfAvailable(id: number): Promise<User> {
         const user = await this._userRepository.findOne(id, {
             withDeleted: true,
         })
@@ -40,9 +40,7 @@ export class UserService {
     }
 
     async findOne(id: number): Promise<User> {
-        const user = await this.isAvailable(id)
-
-        return user
+        return await this.getUserIfAvailable(id)
     }
 
     async remove(id: number): Promise<boolean> {

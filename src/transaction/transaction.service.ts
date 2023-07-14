@@ -21,7 +21,7 @@ export class TransactionService {
         createTransactionInput: CreateTransactionInput,
         wallet: WalletInput,
     ): Promise<Transaction> {
-        await this._walletService.isAvailable(wallet.id)
+        await this._walletService.getWalletIfAvailable(wallet.id)
 
         const { type, amount } = createTransactionInput
 

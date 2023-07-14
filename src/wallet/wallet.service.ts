@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
+import { TransactionTypes } from 'src/transaction/enums/transaction-types.enum'
 import { UserInput } from 'src/user/dto/user.input'
 import { UserService } from 'src/user/user.service'
 
@@ -22,7 +23,7 @@ export class WalletService {
         createWalletInput: CreateWalletInput,
         user: UserInput,
     ): Promise<Wallet> {
-        await this._userService.isAvailable(user.id)
+        await this._userService.getUserIfAvailable(user.id)
 
         const { name } = createWalletInput
 
@@ -34,7 +35,7 @@ export class WalletService {
         return await this._walletRepository.save(wallet)
     }
 
-    async isAvailable(id: string): Promise<Wallet> {
+    async getWalletIfAvailable(id: string): Promise<Wallet> {
         const wallet = await this._walletRepository.findOne(id, {
             withDeleted: true,
         })
@@ -65,8 +66,24 @@ export class WalletService {
     }
 
     async findOne(id: string): Promise<Wallet> {
-        const wallet = await this.isAvailable(id)
+        return await this.getWalletIfAvailable(id)
+    }
 
-        return wallet
+    async getBalance(wallet: Wallet): Promise<number> {
+        const data = await this._walletRepository
+            .createQueryBuilder('wallet')
+            .where('wallet.id = :walletId', { walletId: wallet.id })
+            .leftJoin('wallet.transactions', 'transactions')
+            .select(
+                `SUM(amount) FILTER (WHERE type = '${TransactionTypes.Deposite}')`,
+                'deposits',
+            )
+            .addSelect(
+                `SUM(amount) FILTER (WHERE type = '${TransactionTypes.Withdraw}')`,
+                'withdraws',
+            )
+            .getRawOne()
+
+        return data.deposits - data.withdraws
     }
 }

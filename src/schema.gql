@@ -24,6 +24,7 @@ type Wallet {
   deletedAt: DateTime
   transactions: [Transaction!]
   user: User!
+  balance: Float!
 }
 
 type User {

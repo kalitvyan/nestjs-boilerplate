@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class Init1689309623291 implements MigrationInterface {
-    name = 'Init1689309623291'
+export class Init1689327401560 implements MigrationInterface {
+    name = 'Init1689327401560'
 
     async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -31,7 +31,7 @@ export class Init1689309623291 implements MigrationInterface {
             CREATE TABLE "transaction" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "type" character varying NOT NULL,
-                "amount" integer NOT NULL,
+                "amount" numeric(10, 2) NOT NULL DEFAULT '0',
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "walletId" uuid NOT NULL,

@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { ObjectType, Field, ID, Float, HideField } from '@nestjs/graphql'
 import {
     Column,
     CreateDateColumn,
@@ -50,4 +50,13 @@ export class Wallet {
     @JoinColumn()
     @Field(() => User)
     user: User
+
+    @HideField()
+    deposits: number
+
+    @HideField()
+    withdraws: number
+
+    @Field(() => Float)
+    balance: number
 }

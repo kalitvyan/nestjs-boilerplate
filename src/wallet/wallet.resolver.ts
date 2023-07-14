@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import {
+    Resolver,
+    Parent,
+    Query,
+    Mutation,
+    Args,
+    ResolveField,
+    Float,
+} from '@nestjs/graphql'
 
 import { UserInput } from 'src/user/dto/user.input'
 
@@ -33,5 +41,10 @@ export class WalletResolver {
     @Query(() => Wallet, { name: 'wallet' })
     findOne(@Args('id', { type: () => String }) id: string): Promise<Wallet> {
         return this._walletService.findOne(id)
+    }
+
+    @ResolveField('balance', () => Float)
+    balance(@Parent() wallet: Wallet): Promise<number> {
+        return this._walletService.getBalance(wallet)
     }
 }
