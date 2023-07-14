@@ -27,15 +27,15 @@ export class User {
     email: string
 
     @Field(() => Date)
-    @CreateDateColumn({ name: 'created_at' })
+    @CreateDateColumn()
     createdAt: Date
 
     @Field(() => Date)
-    @UpdateDateColumn({ name: 'updated_at' })
+    @UpdateDateColumn()
     updatedAt: Date
 
     @Field(() => Date)
-    @DeleteDateColumn({ name: 'deleted_at' })
+    @DeleteDateColumn()
     deletedAt?: Date
 
     @OneToMany(() => Wallet, (wallet) => wallet.user, {

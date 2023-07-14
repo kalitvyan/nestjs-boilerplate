@@ -28,18 +28,18 @@ export class Transaction {
     amount: number
 
     @Field(() => Date)
-    @CreateDateColumn({ name: 'created_at' })
+    @CreateDateColumn()
     createdAt: Date
 
     @Field(() => Date)
-    @UpdateDateColumn({ name: 'updated_at' })
+    @UpdateDateColumn()
     updatedAt: Date
 
     @ManyToOne(() => Wallet, (wallet) => wallet.transactions, {
         onDelete: 'CASCADE',
         nullable: false,
     })
-    @JoinColumn({ name: 'wallet_id' })
+    @JoinColumn()
     @Field(() => Wallet)
     wallet: Wallet
 }

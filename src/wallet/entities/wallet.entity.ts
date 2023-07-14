@@ -26,15 +26,15 @@ export class Wallet {
     name: string
 
     @Field(() => Date)
-    @CreateDateColumn({ name: 'created_at' })
+    @CreateDateColumn()
     createdAt: Date
 
     @Field(() => Date)
-    @UpdateDateColumn({ name: 'updated_at' })
+    @UpdateDateColumn()
     updatedAt: Date
 
     @Field(() => Date)
-    @DeleteDateColumn({ name: 'deleted_at' })
+    @DeleteDateColumn()
     deletedAt?: Date
 
     @OneToMany(() => Transaction, (transaction) => transaction.wallet, {
@@ -47,7 +47,7 @@ export class Wallet {
         onDelete: 'CASCADE',
         nullable: false,
     })
-    @JoinColumn({ name: 'user_id' })
+    @JoinColumn()
     @Field(() => User)
     user: User
 }
