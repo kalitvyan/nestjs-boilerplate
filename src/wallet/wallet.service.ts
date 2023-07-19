@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
@@ -7,12 +7,15 @@ import { UserInput } from 'src/user/dto/user.input'
 import { UserService } from 'src/user/user.service'
 
 import { CreateWalletInput } from './dto/create-wallet.input'
+import { WalletInput } from './dto/wallet.input'
 import { Wallet } from './entities/wallet.entity'
 import { WalletClosedException } from './exceptions/walletClosed.exception'
 import { WalletNotFoundException } from './exceptions/walletNotFound.exception'
 
 @Injectable()
 export class WalletService {
+    private _logger = new Logger(WalletService.name)
+
     constructor(
         @InjectRepository(Wallet)
         private _walletRepository: Repository<Wallet>,
@@ -25,14 +28,20 @@ export class WalletService {
     ): Promise<Wallet> {
         await this._userService.getUserIfAvailable(user.id)
 
-        const { name } = createWalletInput
+        try {
+            const { name } = createWalletInput
 
-        const wallet = this._walletRepository.create({
-            name,
-            user,
-        })
+            const wallet = this._walletRepository.create({
+                name,
+                user,
+            })
 
-        return await this._walletRepository.save(wallet)
+            return await this._walletRepository.save(wallet)
+        } catch (error) {
+            this._logger.error(error, 'WalletService: create method error')
+
+            throw new Error(error)
+        }
     }
 
     async getWalletIfAvailable(id: string): Promise<Wallet> {
@@ -52,10 +61,20 @@ export class WalletService {
     }
 
     async close(id: string): Promise<boolean> {
-        const closeWallet = await this._walletRepository.softDelete(id)
+        try {
+            const closeWallet = await this._walletRepository.softDelete(id)
 
-        if (!closeWallet.affected) {
-            throw new WalletNotFoundException(id)
+            if (!closeWallet.affected) {
+                throw new WalletNotFoundException(id)
+            }
+        } catch (error) {
+            this._logger.error(error, 'WalletService: close method error')
+
+            if (error instanceof WalletNotFoundException) {
+                throw error
+            }
+
+            throw new Error(error)
         }
 
         return true
@@ -69,8 +88,8 @@ export class WalletService {
         return await this.getWalletIfAvailable(id)
     }
 
-    async getBalance(wallet: Wallet): Promise<number> {
-        const data = await this._walletRepository
+    async getBalance(wallet: Wallet | WalletInput): Promise<number> {
+        const { deposits, withdraws } = await this._walletRepository
             .createQueryBuilder('wallet')
             .where('wallet.id = :walletId', { walletId: wallet.id })
             .leftJoin('wallet.transactions', 'transactions')
@@ -84,6 +103,6 @@ export class WalletService {
             )
             .getRawOne()
 
-        return data.deposits - data.withdraws
+        return deposits - withdraws
     }
 }
