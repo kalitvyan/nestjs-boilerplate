@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
@@ -9,14 +9,22 @@ import { UserNotFoundException } from './exceptions/userNotFound.exception'
 
 @Injectable()
 export class UserService {
+    private _logger = new Logger(UserService.name)
+
     constructor(
         @InjectRepository(User) private _userRepository: Repository<User>,
     ) {}
 
     async create(createUserInput: CreateUserInput): Promise<User> {
-        const user = this._userRepository.create(createUserInput)
+        try {
+            const user = this._userRepository.create(createUserInput)
 
-        return await this._userRepository.save(user)
+            return await this._userRepository.save(user)
+        } catch (error) {
+            this._logger.error(error, 'UserService: create method error')
+
+            throw new Error(error)
+        }
     }
 
     async getUserIfAvailable(id: number): Promise<User> {
@@ -44,10 +52,20 @@ export class UserService {
     }
 
     async remove(id: number): Promise<boolean> {
-        const removeUser = await this._userRepository.softDelete(id)
+        try {
+            const removeUser = await this._userRepository.softDelete(id)
 
-        if (!removeUser.affected) {
-            throw new UserNotFoundException(id)
+            if (!removeUser.affected) {
+                throw new UserNotFoundException(id)
+            }
+        } catch (error) {
+            this._logger.error(error, 'UserService: remove method error')
+
+            if (error instanceof UserNotFoundException) {
+                throw error
+            }
+
+            throw new Error(error)
         }
 
         return true
